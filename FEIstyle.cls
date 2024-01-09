@@ -188,11 +188,11 @@
     \def\@rok{#3}}
 \newcommand{\printDatum}{\@den.\@mesiac.\@rok}
 
-\def\@studijnyProgram{Aplikovan\a'a informatika}
+\def\@studijnyProgram{Robotika a kybernetika}
 \def\FEIstudyProgramme#1{\def\@studijnyProgram{#1}}
 \newcommand{\printStudijnyProgram}{\@studijnyProgram}
 
-\def\@studijnyProgramEn{Applied Informatics}
+\def\@studijnyProgramEn{Robotics and Cybernetics}
 \def\FEIstudyProgrammeEn#1{\def\@studijnyProgramEn{#1}}
 \newcommand{\printStudijnyProgramEn}{\@studijnyProgramEn}
 
@@ -200,19 +200,19 @@
 %\def\FEIstudyFieldNumber#1{\def\@cisloStudijnehoOdboru{#1}}
 %\newcommand{\printCisloStudijnehoOdboru}{\@cisloStudijnehoOdboru}
 
-\def\@nazovStudijnehoOdboru{Informatika}
+\def\@nazovStudijnehoOdboru{Elektrotechnika a informatika}
 \def\FEIstudyField#1{\def\@nazovStudijnehoOdboru{#1}}
 \newcommand{\printNazovStudijnehoOdboru}{\@nazovStudijnehoOdboru}
 
-\def\@nazovStudijnehoOdboruEn{Computer Science}
+\def\@nazovStudijnehoOdboruEn{Kybernetika}
 \def\FEIstudyFieldEn#1{\def\@nazovStudijnehoOdboruEn{#1}}
 \newcommand{\printNazovStudijnehoOdboruEn}{\@nazovStudijnehoOdboruEn}
 
-\def\@skoliacePracovisko{\a'Ustav informatiky a matematiky}
+\def\@skoliacePracovisko{\a'Ustav robotiky a kybernetiky}
 \def\FEItrainingWorkplace#1{\def\@skoliacePracovisko{#1}}
 \newcommand{\printSkoliacePracovisko}{\@skoliacePracovisko}
 
-\def\@skoliacePracoviskoEn{Institute of Computer Science and Mathematics}
+\def\@skoliacePracoviskoEn{Institute of Robotics and Cybernetics}
 \def\FEItrainingWorkplaceEn#1{\def\@skoliacePracoviskoEn{#1}}
 \newcommand{\printSkoliacePracoviskoEn}{\@skoliacePracoviskoEn}
 
