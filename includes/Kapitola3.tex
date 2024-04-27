@@ -4,7 +4,7 @@ Hlavnou časťou našej práce je implementácia algoritmu na hľadanie trajekt�
 
 Pri rozhodovaní o vhodnom algoritme je dôležité zohľadniť nielen schopnosť algoritmu nájsť optimálnu trajektóriu, ale aj jeho rýchlosť výpočtu. Vzhľadom na to, že náš robotický systém pracuje v reálnom čase, je kľúčové zvoliť algoritmus, ktorý dokáže rýchlo generovať trajektórie bez zbytočného oneskorenia.
 
-V tejto kapitole sa budeme venovať výberu algoritmu plánovania trajektórie pre naše špecifické úlohy. Taktiež si predstavíme existujúce riešenie, na ktorom budeme v našej práci stavať, rozširovať a upravovať ho podľa potrieb našej úlohy. Na záver si vysvetlíme, ako budeme pristupovať k plánovaniu trajektórie pri jednotlivých kinematických štruktúrach, ktoré budeme testovať.
+V tejto kapitole sa budeme bližšie venovať algoritmu plánovania trajektórie, ktorý sme sa rozhodli zvoliť na riešenie nášho problému a vysvetlíme si dôvody jeho výberu. Taktiež si predstavíme existujúce riešenie, na ktorom budeme v našej práci stavať, rozširovať a upravovať ho podľa potrieb našej úlohy. Na záver si vysvetlíme, ako budeme pristupovať k plánovaniu trajektórie pri jednotlivých kinematických štruktúrach, ktoré budeme testovať.
 
 \subsection{RRT}
 
@@ -16,7 +16,7 @@ Analýzou jednotlivých typov algoritmov pre plánovanie trajektórie sme dospel
 \subsection{Riešenie RRT - python}
 RRT algoritmus je široko využívaný a populárny, a preto existuje mnoho dostupných implementácií v rôznych programovacích jazykoch. V našej práci budeme pracovať v jazyku Python, preto sme sa rozhodli analyzovať rôzne voľne dostupné implementácie tohto algoritmu v tomto jazyku.
 
-Z dostupných riešení a implementácií RRT algoritmu v jazyku Python sme sa rozhodli použiť implementáciu od autorov knižnice rrt-algorithms []. Obsahuje RRT algoritmus (obr. \ref{OBRAZOK 3.1}) ako aj jeho modifikácie - RRT* (obr. \ref{OBRAZOK 3.2}) a RRT connect (obr. \ref{OBRAZOK 3.3}).
+Z dostupných riešení a implementácií RRT algoritmu v jazyku Python sme sa rozhodli použiť implementáciu od autorov knižnice rrt-algorithms []. Obsahuje samotný RRT algoritmus (obr. \ref{OBRAZOK 3.1}) ako aj jeho modifikácie - RRT* (obr. \ref{OBRAZOK 3.2}) a RRT connect (obr. \ref{OBRAZOK 3.3}).
 
 \begin{figure}[]
 	\centering
@@ -48,8 +48,6 @@ Plánovanie bude prebiehať na rozdielnych kinematických štruktúrach, preto j
 
  
 \subsubsection{3 stupne voľnosti}
-Plánovanie trajektórie pri kinematickej štruktúre s 3 stupňami budeme riešiť primárne v kartézskom súradnicovom systéme. 
-Ako základ pre implemetáciu nášho algoritmu použijeme RRT v 3 rozmernom konfiguračnom priestore kde osi $x$ a $y$ budú reprezentovať osi $x$, $y$ v pracovnom priestore robota. Os $z$ konfiguračného priestoru bude zodpovedať natočenie objektu okolo jeho stredu, ktorý nám bude reprezentovať bod uchytenia objektu.
 
 Plánovanie trajektórie pri kinematickej štruktúre s 3 stupňami voľnosti budeme riešiť primárne v kartézskom súradnicovom systéme. Pre implementáciu nášho algoritmu použijeme RRT v trojrozmernom konfiguračnom priestore, pričom osi $x$ a $y$ budú reprezentovať osi $x$ a $y$ v pracovnom priestore robota. Os $z$ konfiguračného priestoru bude zodpovedať natočeniu objektu okolo jeho stredu, ktorý nám bude reprezentovať bod uchytenia objektu. Rozsah konfiguračného priestoru (tab. \ref{table 3.1}) bude zodpovedať rozsahu pracovnému priestoru robota v osiach $x$, $y$ a rozsahu maximálnej rotácie objektu v priestore.
 
