@@ -7,6 +7,7 @@
 % Argument `tnr` selects the Times New Roman font, which is required by URK FEI STU
 \documentclass[dp, tnr]{FEIstyle}
 % \documentclass[dp, tnr, en]{FEIstyle} % If you want to write the thesis in English, add the argument `en`
+\usepackage[backend=biber]{biblatex}
 
 % Fill in your name, thesis title and details 
 \FEIauthor{Bc. Michal Bíro}
@@ -25,7 +26,8 @@
 \FEIstudyFieldEn{cybernetics}
 
 \FEIglossaries{includes/glossary}
-\bibliography{includes/bibliography.bib}
+\addbibresource{zdroje.bib}
+%\bibliography{includes/bibliography.bib}
 
 \iffalse \input{includes/glossary} \fi
 
@@ -55,7 +57,16 @@
 
 % bibliography should use UTF-8 accents (write as is ľščťžýáí...) NOT converted by BibDesk
 % http://tex.stackexchange.com/questions/57743/how-to-write-%C3%A4-and-other-umlauts-and-accented-letters-in-bibliography
-\FEIbibliography %includes/bibliography.bib
+%\FEIbibliography{includes/bibliography}
+\printbibliography
+
+%\begin{thebibliography}{2}
+%	\bibitem{FKIK}
+%	\textbf{STMicroelectronics}, \textit{VL6180X - Proximity and ambient light sensing module} [online], 2016, [cit 2022-4-21] Dostupné z: \url{https://www.st.com/resource/en/datasheet/vl6180x.pdf } 
+%	
+%	\bibitem{prezentacia}
+%	\textbf{STMicroelectronics}, \textit{VL6180X - Proximity and ambient light sensing module} [online], 2016, [cit 2022-4-21] Dostupné z: \url{https://www.st.com/resource/en/datasheet/vl6180x.pdf } 
+%\end{thebibliography}
 
 \backmatter
 

@@ -101,6 +101,7 @@
 \usepackage{algorithmic}
 \usepackage[acronym,nopostdot,nogroupskip,nonumberlist]{glossaries}
 \usepackage{gensymb}
+\usepackage[backend=biber]{biblatex}
 % \usepackage{showframe} % debugging overflows
 
 % Set the style of figure, table and equation numbering
