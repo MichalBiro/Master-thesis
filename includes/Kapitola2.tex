@@ -10,7 +10,7 @@ V tejto kapitole sa budeme venovať analýze rôznych algoritmov využívaných 
 
 Algoritmus RRT – z anglického Rapidly-exploring Random Tree, by sa dal do slovenčiny preložiť ako rýchlo rastúci náhodný strom. Algoritmus je v oblasti robotiky veľmi rozšírení a obľúbený vďaka svojej schopnosti rýchlo prehľadávať vysoko dimenzionálny konfiguračný priestor, v ktorom zohľadňuje prekážky v priestore ako aj dynamiku telesa. \newline
 
-Ide o algoritmus založený na prehľadávaní konfiguračného priestoru $C$ , kde sa v iteráciách vytvárajú náhodné uzly - $q$, ktorých spájaním vznikajú nové potenciálne cesty. Každý uzol $q$ reprezentuje pozíciu a orientáciu telesa v 2D alebo 3D priestore []. Pri plánovaní trajektórie je generovaný kontinuálny rad uzlov (obr. \ref{OBRAZOK 1.2.1}), ktorý začína v počiatočnom stave $q_{init}$,  a postupne sa rozrastá až dosiahne koncový stav $q_{goal}$.  Generovanie stromu prebieha v iteráciách kedy sa vždy vygeneruje náhodná konfigurácia $q_{rand}$ a nájde sa k nej najbližší uzol patriaci stromu. Od daného uzla je následne vo vzdialenosti v od uzla $q_{nearest}$ vytvorený nový uzol $q_{new}$. Proces rozrastania stromu sa končí v momente ak sa $q_{new}$  nachádza v okolí cieľovej konfigurácie $q_{goal}$, ktoré je definované vzdialenosťou $d$. 
+Ide o algoritmus založený na prehľadávaní konfiguračného priestoru $C$ , kde sa v iteráciách vytvárajú náhodné uzly - $q$, ktorých spájaním vznikajú nové potenciálne cesty. Každý uzol $q$ reprezentuje pozíciu a orientáciu telesa v 2D alebo 3D priestore \cite{RRT-Kuffner}. Pri plánovaní trajektórie je generovaný kontinuálny rad uzlov (obr. \ref{OBRAZOK 1.2.1}), ktorý začína v počiatočnom stave $q_{init}$,  a postupne sa rozrastá až dosiahne koncový stav $q_{goal}$.  Generovanie stromu prebieha v iteráciách kedy sa vždy vygeneruje náhodná konfigurácia $q_{rand}$ a nájde sa k nej najbližší uzol patriaci stromu. Od daného uzla je následne vo vzdialenosti v od uzla $q_{nearest}$ vytvorený nový uzol $q_{new}$. Proces rozrastania stromu sa končí v momente ak sa $q_{new}$  nachádza v okolí cieľovej konfigurácie $q_{goal}$, ktoré je definované vzdialenosťou $d$. 
 
 Ak neuvažujeme voľný konfiguračný priestor $C_{free}$ treba v procese generovania taktiež overovať kolíziu s danými prekážkami v priestore - $C_{obs}$. Novo generovaný uzol stromu sa nesmie nachádzať v priestore prekážky - $C_{obs}$, a ani cesta medzi dvoma susednými uzlami nesmie kolidovať s prekážkou. Pokiaľ uzol spĺňa tieto podmienky, je zaradený do štruktúry stromu, v opačnom prípade je vyradený a proces pokračuje ďalej.
 
@@ -37,7 +37,7 @@ Pri navrhovaní algoritmu pre plánovanie trajektórií je preto dôležité hľ
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=160mm]{img/RRT2.png}
-	\caption{Vplyv počtu iterácií na výslednú trajektóriu \cite{}}\label{OBRAZOK 1.2.2} 
+	\caption{Vplyv počtu iterácií na výslednú trajektóriu \cite{RRT-Kuffner}}\label{OBRAZOK 1.2.2} 
 \end{figure} 
 
 \subsection{RRT - connect (prepojený)}
@@ -47,7 +47,7 @@ Algoritmus RRT Connect (spojenie) je ďalšou modifikáciou algoritmu RRT. V pro
 \begin{figure}[h!]
 	\centering
 	\includegraphics[width=70mm]{img/RRT-connect.png}
-	\caption{Prepojenie 2 stromov \cite{}}\label{OBRAZOK 1.2.3} 
+	\caption{Prepojenie 2 stromov \cite{RRT-Kuffner}}\label{OBRAZOK 1.2.3} 
 \end{figure} 
 
 Tento algoritmus má výhodu v tom, že nájdenie trajektórie je často ľahšie dosiahnuteľné jedným z dvoch možných smerov pohybu medzi dvoma bodmi, čo závisí od prekážok v priestore $C_{obs}$. Použitím algoritmu RRT Connect sa zvyšuje pravdepodobnosť úspešného nájdenia trajektórie od počiatočného bodu ku koncovému.
@@ -66,7 +66,7 @@ Tento prístup k plánovaniu trajektórie je intuitívny a efektívny v situáci
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=100mm]{img/Potencialove_pole2.png}
-	\caption{Potenciálové pole \cite{}}\label{OBRAZOK 1.2.4} 
+	\caption{Potenciálové pole \cite{Potencialove_pole}}\label{OBRAZOK 1.2.4} 
 \end{figure} 
 
 \subsection{STOMP algoritmus}
@@ -81,7 +81,7 @@ Zvolenie správnych parametrov a vyváženie medzi priestorom prehľadávania, o
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=100mm]{img/STOMP.png}
-	\caption{Generované trajektórie \cite{}}\label{OBRAZOK 1.2.5} 
+	\caption{Generované trajektórie \cite{STOMP}}\label{OBRAZOK 1.2.5} 
 \end{figure} 
 
 \begin{figure}[h]

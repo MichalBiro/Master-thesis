@@ -122,11 +122,11 @@ Funkcie na výpočet priamej a inverznej kinematiky sme si implementovali sami. 
  \begin{figure}[h]
 	\centering
 	\includegraphics[width=80mm]{img/FK1.png}
-	\caption{Robotické rameno s dvoma stupňami voľnosti \cite{FKIK}} \label{OBRAZOK 4.8} 
+	\caption{Robotické rameno s dvoma stupňami voľnosti \cite{FK}} \label{OBRAZOK 4.8} 
 \end{figure} 
 
 Priama kinematika slúži na získanie súradníc pozície koncového bodu robotického ramena na základe natočenia kĺbov ramena (obr. \ref{OBRAZOK 4.8}). Na výpočet koncovej pozície nám stačí poznať hodnoty natočenia prvého a druhého kĺba. Tretí kĺb sa nachádza v koncovom bode ramena a preto jeho rotácia neovplyvňuje pozíciu koncového bodu.
-Tú získame pomocou nasledovných rovníc  \ref{e1}  a  \ref{e2}  \cite{FKIK}.
+Tú získame pomocou nasledovných rovníc  \ref{e1}  a  \ref{e2}  \cite{FK}.
 
 \begin{equation}
 	\begin{aligned}
@@ -141,7 +141,7 @@ Tú získame pomocou nasledovných rovníc  \ref{e1}  a  \ref{e2}  \cite{FKIK}.
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=85mm]{img/FK2.png}
-	\caption{Súradnice koncového bodu \cite{FKIK} } \label{OBRAZOK 4.9} 
+	\caption{Súradnice koncového bodu \cite{FK} } \label{OBRAZOK 4.9} 
 \end{figure} 
 
 \begin{equation}
@@ -164,15 +164,15 @@ Inverzná kinematika, ako vyplýva z názvu, spĺňa opačný účel ako priama 
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=140mm]{img/IK-EUED.png}
-	\caption{Dve možné riešenia \cite{FKIK}} \label{OBRAZOK 4.10} 
+	\caption{Dve možné riešenia \cite{FK}} \label{OBRAZOK 4.10} 
 \end{figure} 
 
-Výpočet inverznej kinematiky robíme pomocou rovníc  \ref{e3 - dole} pre kĺb dole  a rovníc \ref{e4 - hore} pre riešenie s kĺbom hore  \cite{prezentacia}.
+Výpočet inverznej kinematiky robíme pomocou rovníc  \ref{e3 - dole} pre kĺb dole  a rovníc \ref{e4 - hore} pre riešenie s kĺbom hore  \cite{IK}.
 
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=80mm]{img/IK1.png}
-	\caption{ Inverzná kinematika - kĺb dole \cite{prezentacia}} \label{OBRAZOK 4.11} 
+	\caption{ Inverzná kinematika - kĺb dole \cite{IK}} \label{OBRAZOK 4.11} 
 \end{figure} 
 
 \begin{equation}
