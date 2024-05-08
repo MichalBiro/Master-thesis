@@ -1,14 +1,14 @@
 \section{Algoritmy plánovania trajektórie}
 \label{kap:2}
-Algoritmus plánovania trajektórie je matematický postup alebo procedúra, ktorá určuje optimálnu cestu alebo pohyb medzi počiatočným a koncovým bodom v priestore.
-Cieľom algoritmu plánovania trajektórie je nájsť optimálnu trajektóriu, ktorá spĺňa určité kritériá, ako sú bezpečnosť, efektivita, minimálny čas, minimalizácia spotrebovanej energie, alebo minimalizácia vplyvu na okolie. Tieto kritériá môžu byť definované podľa konkrétnej aplikácie a požiadaviek.
+Algoritmus plánovania trajektórie je matematický postup alebo procedúra, ktorá určuje cestu alebo pohyb medzi počiatočným a koncovým bodom v priestore.
+Cieľom algoritmu plánovania trajektórie je nájsť takú trajektóriu, ktorá spĺňa určité kritériá, ako sú bezpečnosť, efektivita, minimálny čas, minimalizácia spotrebovanej energie, alebo minimalizácia vplyvu na okolie. Tieto kritériá môžu byť definované podľa konkrétnej aplikácie a požiadaviek.
 
 V tejto kapitole sa budeme venovať analýze rôznych algoritmov využívaných v oblasti robotiky. Na základe tejto analýzy budeme schopní určiť, ktorý z týchto algoritmov najlepšie vyhovuje našim potrebám a zabezpečí optimálnu kombináciu medzi presnosťou a rýchlosťou výpočtu. Vybraný algoritmus bude slúžiť ako základ pre úspešnú implementáciu a funkčnosť nášho systému pre plánovanie trajektórií.
  
 \subsection{RRT}
 \label{kap:2.1}
 
-Algoritmus RRT – z anglického Rapidly-exploring Random Tree, by sa dal do slovenčiny preložiť ako rýchlo rastúci náhodný strom. Algoritmus je v oblasti robotiky veľmi rozšírení a obľúbený vďaka svojej schopnosti rýchlo prehľadávať vysoko dimenzionálny konfiguračný priestor, v ktorom zohľadňuje prekážky v priestore ako aj dynamiku telesa. \newline
+Algoritmus RRT – z anglického Rapidly-exploring Random Tree, by sa dal do slovenčiny preložiť ako rýchlo rastúci náhodný strom. Algoritmus je v oblasti robotiky veľmi rozšírení a obľúbený vďaka svojej schopnosti rýchlo prehľadávať vysoko dimenzionálny konfiguračný priestor, v ktorom zohľadňuje prekážky v priestore ako aj dynamiku telesa. Autorom algoritmu sú James J. Kuffner a Steven M. LaValle \cite{RRT-Kuffner}.
 
 Ide o algoritmus založený na prehľadávaní konfiguračného priestoru $C$ , kde sa v iteráciách vytvárajú náhodné uzly - $q$, ktorých spájaním vznikajú nové potenciálne cesty. Každý uzol $q$ reprezentuje pozíciu a orientáciu telesa v 2D alebo 3D priestore \cite{RRT-Kuffner}. Pri plánovaní trajektórie je generovaný kontinuálny rad uzlov (obr. \ref{OBRAZOK 1.2.1}), ktorý začína v počiatočnom stave $q_{init}$,  a postupne sa rozrastá až dosiahne koncový stav $q_{goal}$.  Generovanie stromu prebieha v iteráciách kedy sa vždy vygeneruje náhodná konfigurácia $q_{rand}$ a nájde sa k nej najbližší uzol patriaci stromu. Od daného uzla je následne vo vzdialenosti v od uzla $q_{nearest}$ vytvorený nový uzol $q_{new}$. Proces rozrastania stromu sa končí v momente ak sa $q_{new}$  nachádza v okolí cieľovej konfigurácie $q_{goal}$, ktoré je definované vzdialenosťou $d$. 
 
@@ -18,10 +18,7 @@ Ak neuvažujeme voľný konfiguračný priestor $C_{free}$ treba v procese gener
 	\centering
 	\includegraphics[width=120mm]{img/RRT1.png}
 	\caption{Vizualizácia princípu RRT algoritmu }\label{OBRAZOK 2.1} 
-\end{figure}  
-
-Ide o neoptimálne riešenie, keďže body v konfiguračnom priestore sú generované náhodne a výsledný tvar trajektórie vzniká ako najkratšia cesta medzi nami vygenerovanými bodmi. Na zlepšenie trajektórie existuje viacero možností, ktoré ponúkajú suboptimálne riešenia problému, jedným z nich je napríklad RRT*.  
-
+\end{figure}    
 
 Algoritmus RRT môže mať nevýhodu v generovaní neoptimálnych výsledkov, pretože generuje body v konfiguračnom priestore náhodne a tvorí trajektóriu ako najkratšiu cestu medzi týmito bodmi. Na zlepšenie výslednej trajektórie existuje niekoľko možností, medzi ktorými je aj RRT*.
 
@@ -30,7 +27,7 @@ Algoritmus RRT môže mať nevýhodu v generovaní neoptimálnych výsledkov, pr
 
 Jedná sa o modifikáciu RRT algoritmu, ktorej cieľom je v porovnaní s pôvodným RRT nájsť kratšiu trajektóriu. Hlavnou úpravou oproti jednoduchému RRT algoritmu je výpočet vzdialenosti z počiatočného do aktuálneho uzlu a následné overenie, či neexistuje v okolí uzol, ktorého vzdialenosť by bola menšia ako vzdialenosť momentálneho prepojenia. Ak táto situácia nastane, algoritmus vyberie prepojenie uzlov , ktoré vytvoria kratšiu trasu. Algoritmy sa tiež líšia ukončovacou podmienkou, kde pre RRT* je určený jasný počet iterácií. Od počtu iterácií závisí výsledný tvar trajektórie, kde so zvyšujúcim sa počtom je algoritmus schopný nájsť kratšie a plynulejšie trasy (obr. \ref{OBRAZOK 1.2.2}).
 
-Tieto úpravy a rozdiely umožňujú algoritmu RRT* dosiahnuť lepšie výsledky v porovnaní s pôvodným RRT, čo ho robí atraktívnou voľbou pre úlohy, kde je kritické dosiahnutie čo najlepšej trajektórie v danom priestore. Je dôležité zohľadniť aj možnosť zvýšenia času výpočtu pri použití algoritmu RRT*. Aj keď má RRT* potenciál nájsť kratšie a plynulejšie trasy ako klasický RRT, zvyšuje sa časová náročnosť algoritmu vzhľadom na výpočet vzdialeností a overovanie optimality spojení medzi uzlami.
+Tieto úpravy a rozdiely umožňujú algoritmu RRT* dosiahnuť lepšie výsledky v porovnaní s pôvodným RRT, čo ho robí atraktívnou voľbou pre úlohy, kde je kritické dosiahnutie čo najlepšej trajektórie v danom priestore. Je dôležité zohľadniť aj možnosť zvýšenia času výpočtu pri použití algoritmu RRT*. Aj keď má RRT* potenciál nájsť kratšie a plynulejšie trasy ako klasický RRT, zvyšuje sa časová náročnosť algoritmu vzhľadom na výpočet vzdialeností a optimalizácie spojení medzi uzlami.
 
 Pri navrhovaní algoritmu pre plánovanie trajektórií je preto dôležité hľadať rovnováhu medzi kvalitou výsledných trajektórií a časovou náročnosťou výpočtu. Niekedy môže byť akceptovateľné mať mierne suboptimálnu trajektóriu, ak to znamená výrazné zrýchlenie výpočtu. 
 
@@ -40,7 +37,7 @@ Pri navrhovaní algoritmu pre plánovanie trajektórií je preto dôležité hľ
 	\caption{Vplyv počtu iterácií na výslednú trajektóriu \cite{RRT-Kuffner}}\label{OBRAZOK 1.2.2} 
 \end{figure} 
 
-\subsection{RRT - connect (prepojený)}
+\subsection{RRT - connect}
 \label{kap:2.3}
 Algoritmus RRT Connect (spojenie) je ďalšou modifikáciou algoritmu RRT. V procese rozširovania stromovej štruktúry vytvára dva stromy z počiatočnej a koncovej konfigurácie, ktoré sa šíria v konfiguračnom priestore, až kým nedôjde k ich spojeniu a vytvoreniu cesty. (obr. \ref{OBRAZOK 1.2.3}). 
 

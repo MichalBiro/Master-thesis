@@ -8,7 +8,8 @@ V tejto kapitole sa budeme bližšie venovať algoritmu plánovania trajektórie
 
 \subsection{RRT}
 
-Analýzou jednotlivých typov algoritmov pre plánovanie trajektórie sme dospeli k záveru, že najvhodnejšou voľbou pre našu úlohu bude RRT algoritmus. Tento výber sme urobili najmä pre jeho schopnosť rýchlo prehľadávať konfiguračný priestor. RRT algoritmus je vhodný nielen pre svoju rýchlosť, ale aj pre jeho univerzálnosť, pretože ho vieme využiť ako v kartézskom súradnicovom systéme, tak aj v kĺbovej súradnicovej sústave. Táto flexibilita bude dôležitá pri implementácii plánovania trajektórie pre rôzne kinematické štruktúry.
+Analýzou jednotlivých typov algoritmov pre plánovanie trajektórie sme dospeli k záveru, že najvhodnejšou voľbou pre našu úlohu bude RRT algoritmus. 
+Tento výber sme urobili najmä pre jeho schopnosť rýchlo prehľadávať konfiguračný priestor. RRT algoritmus je vhodný nielen pre svoju rýchlosť, ale aj pre jeho univerzálnosť, pretože ho vieme využiť ako v kartézskom súradnicovom systéme, tak aj v kĺbovej súradnicovej sústave. Táto flexibilita bude dôležitá pri implementácii plánovania trajektórie pre rôzne kinematické štruktúry.
 
 Ďalšou výhodou RRT algoritmu je jeho jednoduchá a rýchla modifikovateľnosť podľa našich potrieb. V našej práci budeme tiež porovnávať RRT algoritmus s jeho modifikáciou, RRT*. Budeme sa snažiť nájsť optimálne riešenie z hľadiska času výpočtu a kvality výslednej trajektórie.
 
@@ -23,7 +24,8 @@ Z dostupných riešení a implementácií RRT algoritmu v jazyku Python sme sa r
 	\includegraphics[width=140mm]{img/RRT-2D.png}
 	\caption{RRT - dvojrozmerný priestor} \label{OBRAZOK 3.1} 
 \end{figure} 
-Riešenie, na ktorom budeme stavať, je vytvorené pre plánovanie v kartézskom súradnicovom systéme a to v dvoj aj v trojrozmernom priestore (obr. \ref{OBRAZOK 3.4}). Algoritmu je potrebné zadať rozsah prehľadávaného priestoru, počiatočný a koncový bod a ak sa v priestore nachádzajú prekážky, ich pozície v prehľadávacom priestore. Ako možeme vidieť na obrázkoch \ref{OBRAZOK 3.1}, \ref{OBRAZOK 3.2}, \ref{OBRAZOK 3.3}, táto implementácia pracuje iba s hmotným bodom, neuvažuje teda rozmery prenášaného objektu.
+
+Riešenie, na ktorom budeme stavať, je vytvorené pre plánovanie v kartézskom súradnicovom systéme a to v dvoj aj v trojrozmernom priestore (obr. \ref{OBRAZOK 3.4}). Algoritmu je potrebné zadať rozsah prehľadávaného priestoru, počiatočný a koncový bod a ak sa v priestore nachádzajú prekážky, ich pozície v prehľadávacom priestore. Ako môžeme vidieť na obrázkoch \ref{OBRAZOK 3.1}, \ref{OBRAZOK 3.2}, \ref{OBRAZOK 3.3}, táto implementácia pracuje iba s hmotným bodom a je vhodná pre mobilný robot.
 \begin{figure}[]
 	\centering
 	\includegraphics[width=140mm]{img/RRTstar-2D.png}
@@ -42,14 +44,15 @@ Riešenie, na ktorom budeme stavať, je vytvorené pre plánovanie v kartézskom
 	\caption{RRT - trojrozmerný priestor} \label{OBRAZOK 3.4} 
 \end{figure} 
 
-Pre riešenie našej úlohy bude potrebné rozšíriť tento algoritmus tak, aby neuvažoval o prenášanom objekte ako o hmotnom bode, ale aby bral do úvahy aj jeho rozmery. Prístup, ktorý je možné zvoliť je kontrola kolízii v generovaných bodoch na základe ktorej bude tento bod uznaný za nevyhovujúci a bude generovaná nová bezkolízna konfigurácia. Objekt bude v priestore definovaný bodom, v ktorom je uchopený robotickým ramenom - v našom prípade to bude geometrický stred objektu, a jeho orientáciou v priestore.  Stred bude definovaný súradnicami $ x $, $ y $ pracovného priestoru v kartézskom súradnicovom systéme. Orientácia objektu bude reprezentovaná ako uhol medzi osou objektu a osou  $x$ v stupňoch.
+
+Pre riešenie našej úlohy bude potrebné rozšíriť tento algoritmus tak, aby neuvažoval o prenášanom objekte ako o hmotnom bode, ale aby bral do úvahy aj rozmery objektu a jeho orientáciu v priestore. Prístup, ktorý je možné zvoliť je kontrola kolízii v generovaných bodoch na základe ktorej bude tento bod uznaný za nevyhovujúci a bude generovaná nová bezkolízna konfigurácia. Objekt bude v priestore definovaný bodom, v ktorom je uchopený robotickým ramenom - v našom prípade to bude geometrický stred objektu, a jeho orientáciou v priestore.  Stred bude definovaný súradnicami $ x $, $ y $ pracovného priestoru v kartézskom súradnicovom systéme. Orientácia objektu bude reprezentovaná ako uhol medzi osou objektu a osou  $x$ v stupňoch.
 
 Plánovanie bude prebiehať na rozdielnych kinematických štruktúrach, preto je dôležité zvoliť správny prístup pre každú z nich a prispôsobiť algoritmus ich individuálnym potrebám.
 
  
-\subsubsection{3 stupne voľnosti}
+\subsubsection{3 stupne voľnosti - kartézsky priestor}
 
-Plánovanie trajektórie pri kinematickej štruktúre s 3 stupňami voľnosti budeme riešiť primárne v kartézskom súradnicovom systéme. Pre implementáciu nášho algoritmu použijeme RRT v trojrozmernom konfiguračnom priestore, pričom osi $x$ a $y$ budú reprezentovať osi $x$ a $y$ v pracovnom priestore robota. Os $z$ konfiguračného priestoru bude zodpovedať natočeniu objektu okolo jeho stredu, ktorý nám bude reprezentovať bod uchytenia objektu. Rozsah konfiguračného priestoru (tab. \ref{table 3.1}) bude zodpovedať rozsahu pracovnému priestoru robota v osiach $x$, $y$ a rozsahu maximálnej rotácie objektu v priestore.
+Plánovanie trajektórie pri kinematickej štruktúre s 3 stupňami voľnosti budeme riešiť v kartézskom aj kĺbovom súradnicovom systéme a obidva prístupu budú navzájom porovnané. Pre implementáciu nášho algoritmu použijeme RRT v trojrozmernom konfiguračnom priestore, pričom osi $x$ a $y$ reprezentujú súradnice $x$ a $y$ v pracovnom priestore robota a os $z$ konfiguračného priestoru bude zodpovedať natočeniu objektu okolo jeho stredu, ktorý nám bude reprezentovať bod uchytenia objektu. Rozsah konfiguračného priestoru (tab. \ref{table 3.1}) bude zodpovedať rozsahu pracovnému priestoru robota v osiach $x$, $y$ a rozsahu maximálnej rotácie objektu v priestore.
 
 \begin{table}[h!]
 	\centering
@@ -62,9 +65,9 @@ Plánovanie trajektórie pri kinematickej štruktúre s 3 stupňami voľnosti bu
 	\caption{Rozsah konfiguračného priestoru - kartézsky súradnicový systém}\label{table 3.1} 
 \end{table}
 
-Pri kinematickej štruktúre s 3 stupňami voľnosti budeme tiež testovať plánovanie trajektórie v kĺbovom priestore. Tieto dáta budeme neskôr používať na porovnanie plánovania trajektórie v kĺbovom a kartézskom priestore. Budeme sledovať čas výpočtu algoritmu, úspešnosť nájdenia cesty a kvalitu trajektórie.
+\subsubsection{3 stupne voľnosti - kĺbový priestor}
 
-Plánovanie trajektórie v kĺbovom priestore nám umožní preskúmať, ako dobre sa algoritmus dokáže prispôsobiť špecifikám kinematickej štruktúry robota a aký vplyv má voľba priestoru na výslednú trajektóriu. Porovnanie výsledkov s plánovaním trajektórie v kartézskom priestore nám poskytne ucelený obraz o výkonnosti a efektívnosti oboch prístupov.
+Plánovanie trajektórie v kĺbovom priestore nám umožní preskúmať, ako dobre sa algoritmus dokáže prispôsobiť špecifikám kinematickej štruktúry robota a aký vplyv má voľba priestoru na výslednú trajektóriu. Porovnanie výsledkov s plánovaním trajektórie v kartézskom priestore nám poskytne ucelený obraz o výkonnosti a efektívnosti oboch prístupov.  V obidvoch prípadoch budeme sledovať čas výpočtu algoritmu, úspešnosť nájdenia cesty a kvalitu trajektórie.
 
 Osi konfiguračného priestoru $x$,$y$ a $z$ budú odpovedať otočeniam jednotlivých kĺbov robotického ramena (tab. \ref{table 3.2}) .
 \begin{table}[h]
@@ -95,6 +98,11 @@ Plánovanie trajektórie pri štruktúre s 2 stupňami voľnosti, ktoré predsta
 	\end{tabular}
 	\caption{Rozsah konfiguračného priestoru - kĺbový priestor}\label{table 3.3} 
 \end{table}
+
+Absencia možnosti otáčať objektom v ľubovolnom bode pracovného priestore značne limituje možnosti plánovacieho algoritmu. Vo väčšine prípadov prenášaných objektov väčších rozmerov algoritmus nebude schopný nájsť riešenie z dôvodu zlej orientácie objektu. Výsledok je teda závislý od orientácia telesa v počiatočnej polohe kde dochádza k uchyteniu objektu. 
+
+Za účelom eliminácie týchto situácií a tak rozšírenia možností danej kinematickej štruktúry sme sa rozhodli implementovať algoritmus, ktorý by nám dovolil zmeniť počiatočnú orientáciu objektu v priestore do takej pozície aby bolo možné nájsť trajektóriu k cieľu. Pre použitie tohoto princípu bude samozrejme potrebné použiť v koncovom bode ramena ďalší motor, ktorý by túto rotáciu zabezpečil. Išlo by však o motor určený len na polohovanie a nebolo by ho možné riadiť v reálnom čase v procese prenášania objektu. Výhodou by bola nižšia cena nákladov.
+
 
 
 

@@ -3,14 +3,20 @@
 
 Kým v predošlej kapitole (kap. \ref{kap:3}) sme si v jednoduchosti vysvetlili ako budeme pristupovať ku plánovaniu trajektórie pri jednotlivých kinematických štruktúrach a opísali sme si konfiguračný priestor pre jednotlivé štruktúry, v tejto kapitole si bližšie vysvetlíme, čo bolo potrebné implementovať do pôvodného kódu aby vyššie spomenuté prístupy fungovali.
 
-Ukážeme si fundamentálne funkcie, na ktorých stojí náš algoritmus a vysvetlíme si ich úlohy a prístup, ktorý sme pri ich implementácii zvolili.
- 
+Ukážeme si fundamentálne funkcie, na ktorých stojí algoritmus a vysvetlíme si ich úlohy a prístup, ktorý sme pri ich implementácii zvolili.
+Princíp fungovania algoritmu môžeme vidieť na obrázku \ref{OBRAZOK 4.16}.
 
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=140mm]{img/VD_RRT.png}
+	\caption{RRT algoritmus} \label{OBRAZOK 4.16} 
+\end{figure}
 
 
 \subsection{Vizualizácia}
 
-Pre potreby vývoju nášho algoritmu bolo v prvom rade potrebné vytvoriť vizualizáciu prenášaného objektu v priestore. Pôvodné riešenie uvažovalo len hmotný bod, ktorého pohyb v priestore sa dá jednoducho zobraziť v grafe. Pri našom probléme má však prenášaný objekt svoj, tvar, rozmery a orientáciu v priestore. Z toho dôvodu bola vytvorená vizualizácia, ktorá nám zobrazuje priemet pracovného priestoru robota v osiach $ x $, $ y $ (obr. \ref{OBRAZOK 4.1}). Obsahuje prenášaný predmet, prekážku, ktorá predstavuje stĺp, na ktorom je robotické rameno uchytené  v prípade plánovania trajektórie v kĺbovom priestore aj samotné robotické rameno. Pracovný priestor spolu s prekážkami a objektom sme vizualizovali v mierke  1 $mm$ = 1 $pixel$. 
+Pre potreby vývoju nášho algoritmu bolo v prvom rade potrebné vytvoriť vizualizáciu prenášaného objektu v priestore. K vypracovaniu tejto časti sme využili knižnicu openCV. Pôvodné riešenie uvažovalo len hmotný bod, ktorého pohyb v priestore sa dá jednoducho zobraziť v grafe. Pri našom probléme má však prenášaný objekt svoj, tvar, rozmery a orientáciu v priestore. Z toho dôvodu bola vytvorená vizualizácia, ktorá nám zobrazuje priemet pracovného priestoru robota v osiach $ x $, $ y $ (obr. \ref{OBRAZOK 4.1}). Obsahuje prenášaný predmet, prekážku, ktorá predstavuje stĺp, na ktorom je robotické rameno uchytené  v prípade plánovania trajektórie v kĺbovom priestore aj samotné robotické rameno. Pracovný priestor spolu s prekážkami a objektom sme vizualizovali v mierke  1 $mm$ = 1 $pixel$. 
 
 \begin{figure}[h]
 	\centering
@@ -23,12 +29,15 @@ Táto vizualizácia spĺňala v prvom rade kontrolnú funkciu, či vygenerovaná
 
 Prenášaný objekt sme si vizualizovali ako obdĺžnik. Ide o univerzálny geometrický tvar najlepšie odpovedajúci  väčšine tovaru, ktorý by sa mohol v sklade nachádzať. Takmer každá krabička alebo iný objekt sa nám do roviny $ xy $ premietne práve ako obdĺžnik. Objekt sme teda definovali pozíciou jeho stredu, výškou, šírkou a uhlom otočenia. 
 
-Pre vypracovanie tejto časti sme využili knižnicu openCV.
-
 \subsection{Objekt v kolízii}
 Hmotný bod prenášaný priestorom má v porovnaní s objektom veľkú výhodu práve v tom, že vieme presne povedať kde v priestore sa nachádza. Tým pádom vieme jednoducho určiť , či je v kolízii s prekážkami alebo opustil pracovný priestor. Pri objekte vieme takýmto spôsobom kontrolovať len jeden jeho bod, ktorým je definovaný a to je v našom prípade jeho stred. Úlohu kontroly kolízie objektu s prekážkami to teda výrazne komplikuje aj vzhľadom na to, že náš objekt mení v priestore aj svoju orientáciu. 
 
-Preto bolo potrebné vytvoriť funkciu, ktorej úlohou bude zistiť či sa náš objekt v danej konfigurácii nenachádza v kolízii alebo neopustil pracovný priestor robota. Touto funkciou je $ collision\_check() $. Ide o základnú funkciu na ktorej stojí celý náš algoritmus a je identická pre všetky kinematické štruktúry. Pracuje v kartézskom súradnicovom systéme. Na základe vstupných údajov, ktorými sú pozícia stredu objektu - súradnice $ x $ a $ y $, rozmery objektu - šírka a výška, a natočenie objektu nám vráti informáciu o tom či sa objekt nachádza v bezkolíznej pozícii. 
+Preto bolo potrebné vytvoriť funkciu, ktorej úlohou bude zistiť či sa náš objekt v danej konfigurácii nenachádza v kolízii alebo neopustil pracovný priestor robota. Touto funkciou je $ collision\_check() $(obr. \ref{OBRAZOK 4.3}) . Ide o základnú funkciu na ktorej stojí celý náš algoritmus a je identická pre všetky kinematické štruktúry. Pracuje v kartézskom súradnicovom systéme. Na základe vstupných údajov, ktorými sú pozícia stredu objektu - súradnice $ x $ a $ y $, rozmery objektu - šírka a výška, a natočenie objektu nám vráti informáciu o tom či sa objekt nachádza v bezkolíznej pozícii. 
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=130mm]{img/VD_collision.png}
+	\caption{ Funkcia $collision\_check()$} \label{OBRAZOK 4.3} 
+\end{figure} 
 
 \begin{figure}[h!]
 	\centering
@@ -62,12 +71,11 @@ Pri objekte treba uvažovať jeho pohyb v priestore.  Každá pozícia, ktorou o
 Pre simuláciu pohybu v priestore sme použili lineárne vzorkovania. Poznáme počiatočnú a koncovú pozíciu, ktoré nám definujú pohyb - prejdenú vzdialenosť a smer. Vypočítame si veľkosť úsečky medzi danými 2 pozíciami v konfiguračnom priestore. Na základe nami zvolenej veľkosti vzorky si rozdelím danú uhlopriečku na daný počet vzoriek. Postupne inkrementujeme jednotlivé prvky počiatočnej pozície ($ x $,$ y $,$ uhol $) o hodnotu, ktorá odpovedá veľkosti vzorky v danej osi. Tým dosiahneme prechodové pozície, pričom v každej z nich kontrolujeme, či sa objekt nenachádza v kolízii.  Ak sú všetky prechodové pozície vyhodnotené ako bezkolízne vieme, že daný cieľový bod je dosiahnuteľný.
 Túto úlohu zabezpečuje funkcia $ linear\_sampling\_collision\_check()$.
 
-OBRAZOK - linearne vzorkovanie
 
 
 \subsection{Kontrola dosiahnuteľnosti cieľa}
 
-Ukončovacia podmienka algoritmu býva vo väčšine prípadov určená vzdialenosťou generovaného bodu v strome od cieľovej pozície, keď sa generovaný bod dostane do blízkosti cieľa je vytvorené prepojenie a algoritmus je ukončený. Ďalšou možnosťou je použiť ako ukončovacia podmienku maximálny počet iterácií. Algoritmus prehľadáva priestor až dokým nie je vygenerovaný daný počet bodov a až následne hľadá prepojenie s cieľom. Táto ukončovacia podmienka sa dá použiť napríklad pri RRT*, kedy je počtu iterácií úmerná kvalita výslednej trajektórie. Pri algoritme RRT-connect sú generované 2 stromy a ukončenie algoritmu
+Ukončovacia podmienka algoritmu býva vo väčšine prípadov určená vzdialenosťou generovaného bodu v strome od cieľovej pozície, keď sa generovaný bod dostane do blízkosti cieľa je vytvorené prepojenie a algoritmus je ukončený. Ďalšou možnosťou je použiť ako ukončovacia podmienku maximálny počet iterácií alebo maximálny čas výpočtu. Algoritmus prehľadáva priestor až dokým nie je vygenerovaný daný počet bodov a až následne hľadá prepojenie s cieľom. Táto ukončovacia podmienka sa dá použiť napríklad pri RRT*, kedy je počtu iterácií úmerná kvalita výslednej trajektórie. Pri algoritme RRT-connect sú generované 2 stromy a ukončenie algoritmu
 nastane pri ich spojení.
 
 V našom algoritme využíva určitú kombináciu jednotlivých prístupov.
@@ -79,22 +87,14 @@ Algoritmu je tiež stanovený maximálny počet iterácií. V prípade dosiahnut
 
 \subsection{3 stupne voľnosti}
 
-Plánovanie trajektórie objektu pri troch stupňoch voľnosti ponúka väčšie možnosti pohybu v priestore, väčšiu množinu potenciálnych pozícií, do ktorých sa môže teleso dostať. Hlavný rozdiel je v treťom kĺbe, ktorý poskytuje možnosť otáčať objektom v jeho danej pozícii a tým sa vyhýbať kolíziám s prekážkami a vyjdeniu z pracovného priestoru. Plánovanie bude prebiehať v kartézskom aj kĺbovom súradnicovom systéme. Program je potrebné prispôsobiť pre oba prípady zvlásť, každý si vyžaduje iné prístupy a úpravy, keďže každý súradnicový systém má svoje vlastné charakteristiky a obmedzenia
+Plánovanie trajektórie objektu pri troch stupňoch voľnosti ponúka väčšie možnosti pohybu v priestore, väčšiu množinu potenciálnych pozícií, do ktorých sa môže teleso dostať. Hlavný rozdiel je v treťom kĺbe, ktorý poskytuje možnosť otáčať objektom v jeho danej pozícii a tým sa vyhýbať kolíziám s prekážkami a vyjdeniu z pracovného priestoru. Plánovanie bude prebiehať v kartézskom aj kĺbovom súradnicovom systéme. Program je potrebné prispôsobiť pre oba prípady zvlásť, každý si vyžaduje iné prístupy a úpravy, keďže každý súradnicový systém má svoje vlastné charakteristiky a obmedzenia.
 
 \subsubsection{Kartézsky súradnicový systém}
 
 Plánovanie v kartézskom súradnicovom systéme je z programovej stránky najjednoduchšie riešenie, ktoré sme implementovali. 
-Ide o pôvodné riešenie rozšírené len o už spomenuté funkcie $ collision\_check() $ a $ linear\_sampling\_collision\_check()$. Princíp fungovania môžeme vidieť na obrázku \ref{OBRAZOK 4.16}.
+Ide o pôvodné riešenie rozšírené len o už spomenuté funkcie $ collision\_check() $ a $ linear\_sampling\_collision\_check()$. 
 
-
- \begin{figure}[h!]
-	\centering
-	\includegraphics[width=140mm]{img/VD_RRT.png}
-	\caption{RRT algoritmus} \label{OBRAZOK 4.16} 
-\end{figure}
-
- 
- Za účelom zrýchlenia algoritmu sme sa rozhodli o jednoduché obmedzenie konfiguračného priestoru. To sme implementovali tak, že sme vytvorili prekážky v konfiguráciách o ktorých sme si istý že objekt nemôže dosiahnuť alebo nechceme aby sa strom rozvíjal daným smerom. Pre toto obmedzenie je potrebné poznať rozmery objektu. Porovnáme si jeho šírku a výšku a vyberieme si jeho menší rozmer. O tento rozmer rozšírime hranice konfiguračného priestoru v osiach $ x $ a $ y $ a všetky možné rotácie v daných bodoch. Výsledok obmedzenia konfiguračného priestoru môžeme vidieť na obrázku . Výsledkom je zrýchlenie algoritmu keďže nie sú generované nové pozície v daných kolíznych konfiguráciách a algoritmus má tendenciu hľadať bližšie v okolí cieľovej pozície. Toto obmedzenie nám pomôže hlavne v situáciách ak sa jedná o objekt väčších rozmerov. 
+ Za účelom zrýchlenia algoritmu sme sa rozhodli o jednoduché obmedzenie konfiguračného priestoru. To sme implementovali tak, že sme vytvorili prekážky v konfiguráciách o ktorých sme si istý že objekt nemôže dosiahnuť alebo nechceme aby sa strom rozvíjal daným smerom. Pre toto obmedzenie je potrebné poznať rozmery objektu. Porovnáme si jeho šírku a výšku a vyberieme si jeho menší rozmer. O tento rozmer rozšírime hranice konfiguračného priestoru v osiach $ x $ a $ y $ a všetky možné rotácie v daných bodoch\ref{OBRAZOK 4.6}. Výsledok obmedzenia konfiguračného priestoru môžeme vidieť na obrázku . Výsledkom je zrýchlenie algoritmu keďže nie sú generované nové pozície v daných kolíznych konfiguráciách a algoritmus má tendenciu hľadať bližšie v okolí cieľovej pozície. Toto obmedzenie nám pomôže hlavne v situáciách ak sa jedná o objekt väčších rozmerov. 
  
   \begin{figure}[h!]
  	\centering
@@ -104,7 +104,7 @@ Ide o pôvodné riešenie rozšírené len o už spomenuté funkcie $ collision\
  
 \subsubsection{Kĺbový súradnicový systém}
 
-Použitie kĺbového súradnicového systému ako konfiguračného priestoru pre plánovanie trajektórie so sebou prináša určité výhody. Hlavnou výhodou je väčšia pravdepodobnosť nájdenia priameho spojenia z počiatočného bodu do cieľovej pozície. Situácie kedy sa v kartézskom systéme nachádza medzi počiatkom a cieľom prekážka sa do kĺbového súradnicového systému premietne iným spôsobom. Tu je možné nájsť priame bezkolízne spojenie medzi danými 2 bodmi keďže priamy pohyb v kĺbovom priestore sa v kartézskom zobrazí ako pohyb po kružnici (obr. \ref{OBRAZOK 4.7}). 
+Použitie kĺbového súradnicového systému ako konfiguračného priestoru pre plánovanie trajektórie so sebou prináša určité výhody. Hlavnou výhodou je väčšia pravdepodobnosť nájdenia priameho spojenia z počiatočného bodu do cieľovej pozície. Situácie kedy sa v kartézskom systéme nachádza medzi počiatkom a cieľom prekážka sa do kĺbového súradnicového systému premietne iným spôsobom. Tu je možné nájsť priame bezkolízne spojenie medzi danými 2 bodmi keďže priamy pohyb v kĺbovom priestore sa v kartézskom zobrazí ako pohyb po kružnici (obr. \ref{OBRAZOK 4.7}).  \newline
 
  \begin{figure}[h!]
  	\centering
@@ -112,12 +112,9 @@ Použitie kĺbového súradnicového systému ako konfiguračného priestoru pre
  	\caption{Pohyb objektu v pracovnom priestore} \label{OBRAZOK 4.7} 
  \end{figure} 
 
-Z dôvodu odlišnosti medzi konfiguračným a pracovným priestorom, keďže každý využíva iný súradnicový systém bolo potrebné implementovať funkcie, ktoré by zabezpečili prechod z jedného do druhého.   
 
-Pre tieto potreby bolo potrebné implementovať funkcie na výpočet priamej a inverznej kinematiky.
 Počiatočná a koncová pozícia sú v úlohe definované v pracovnom priestore (kartézsky súradnicový systém). Na ich prepočet do kĺbového systému je použitá inverzná kinematika, ktorej výstupom sú natočenia jednotlivých kĺbov v daných pozíciach. Použitie funkcie  $ collision\_check() $ si vyžaduje aby boli známe súradnice stredu objektu v pracovnom priestore. Z toho dôvodu je potrebný výpočet pozície koncového efektora ramena pomocou priamej kinematiky z kĺbových súradníc daného bodu.
 
-Funkcie na výpočet priamej a inverznej kinematiky sme si implementovali sami. Nebolo potrebné používať žiadnu knižnicu keďže sa jedná len o jednoduché rameno s 3 kĺbmi umiestnenými v jednej rovine. Funkcie bolo možné vytvoriť pomocou jednoduchých vzorcov.
 
  \begin{figure}[h]
 	\centering
@@ -159,7 +156,7 @@ Pri priamej kinematike je tiež dôležité nezabudnúť že od natočenia prvý
 	\label{e5} 
 \end{equation}
 
-Inverzná kinematika, ako vyplýva z názvu, spĺňa opačný účel ako priama kinematika. Na základe súradníc koncového bodu robota získame natočenia kĺbov robota. Pre každú pozíciu však existujú potenciálne 2 riešenia - s kĺbom hore a kĺbom dole (obr. \ref{OBRAZOK 4.10}). 
+Inverzná kinematika, ako vyplýva z názvu, spĺňa opačný účel ako priama kinematika. Na základe súradníc koncového bodu robota získame natočenia kĺbov robota. Pre každú pozíciu však existujú potenciálne 2 riešenia (obr. \ref{OBRAZOK 4.10}). 
 
 \begin{figure}[h]
 	\centering
@@ -172,7 +169,7 @@ Výpočet inverznej kinematiky robíme pomocou rovníc  \ref{e3 - dole} pre kĺb
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=80mm]{img/IK1.png}
-	\caption{ Inverzná kinematika - kĺb dole \cite{IK}} \label{OBRAZOK 4.11} 
+	\caption{ Inverzná kinematika - poloha b \cite{IK}} \label{OBRAZOK 4.11} 
 \end{figure} 
 
 \begin{equation}
@@ -196,11 +193,9 @@ Nevýhodou kĺbového súradnicové systému v porovnaní s kartézskym je obtia
 
 \subsection{2 stupne voľnosti}
 
-Plánovanie trajektórie pre kinematickú štruktúru s dvoma stupňami voľnosti nám už neponúka možnosť výberu konfiguračného priestoru medzi kartézskym a kĺbovým. Vzhľadom k absencii tretieho kĺbu, umiestneného v efektore robotického ramena nie je možné dosiahnuť ľubovoľnú  pozíciu objektu v priestore. Z toho dôvodu je nutné použiť pre plánovanie konfiguračný priestor s kĺbovým súradnicovým systémom. Pôjde o dvojrozmerný konfiguračný priestor kde osi $ x $ a $ y $ predstavujú natočenia jednotlivých kĺbov $ q1 $ a $ q2 $.  
+Plánovanie trajektórie pre kinematickú štruktúru s dvoma stupňami voľnosti nám už neponúka možnosť výberu konfiguračného priestoru medzi kartézskym a kĺbovým. Vzhľadom k absencii tretieho kĺbu, umiestneného v efektore robotického ramena nie je možné dosiahnuť ľubovoľnú  pozíciu objektu v priestore. Z toho dôvodu je nutné použiť pre plánovanie konfiguračný priestor s kĺbovým súradnicovým systémom. Pôjde o dvojrozmerný konfiguračný priestor kde osi $ x $ a $ y $ predstavujú natočenia jednotlivých kĺbov $ q1 $ a $ q2 $.  \newline
 
-Absencia možnosti otáčať objektom v ľubovolnom bode pracovného priestore značne limituje možnosti plánovacieho algoritmu. Vo väčšine prípadov prenášaných objektov väčších rozmerov algoritmus nebude schopný nájsť riešenie z dôvodu zlej orientácie objektu. Výsledok je teda závislý od orientácia telesa v počiatočnej polohe kde dochádza k uchyteniu objektu. 
-
-Za účelom eliminácie týchto situácií a tak rozšírenia možností danej kinematickej štruktúry sme sa rozhodli implementovať algoritmus, ktorý by nám dovolil zmeniť počiatočnú orientáciu objektu v priestore do takej pozície aby bolo možné nájsť trajektóriu k cieľu. Ide o princíp predrotácie a zabezpečuje ho funkcia $ pre\_rot() $. Pre použitie tohoto princípu bude samozrejme potrebné použiť v koncovom bode ramena ďalší motor, ktorý by túto rotáciu zabezpečil. Išlo by však o motor určený len na polohovanie a nebolo by ho možné riadiť v reálnom čase v procese prenášania objektu. Výhodou by bola nižšia cena nákladov.
+Ako bolo už v analýze jednotlivých kinematických štruktúr spomenuté, absencia možnosti otáčať objektom v ľubovolnom bode pracovného priestore limituje možnosti plánovacieho algoritmu. Za účelom eliminácie týchto situácií sme sa rozhodli implementovať algoritmus, ktorý nám nastaví objekt na začiatku plánovania trajektórie do správnej orientácie aby bol cieľ dosiahnuteľný. Ide o princíp predrotácie a zabezpečuje ho funkcia $ pre\_rot() $.
 
 Prvým krokom v princípe predrotácie je identifikácia prípadov, v ktorých je potrebné túto funkciu použiť. Pomocou geometrie sme si vypočítali aké musia byť parametre objektu aby bolo nutné použiť predrotáciu. V procese prechodu z počiatocnej do cieľovej pozície nastáva jedna kritická situácia kedy druhé rameno robota musí preniesť objekt okolo stĺpa, na ktorom je upevnený. Tento moment nastáva pri konfigurácii $ q_1 = 90 \degree $ a $ q_2 = 180 \degree $. V prípade, že uhlopriečka objektu je totožná s orientáciou druhého ramena robota, roh objektu sa nachádza v pozícii kedy najviac zasahuje do priestoru. V tomto bode sme vypočítali hraničnú veľkosť uhlopriečky telesa, ktorej hodnota sa rovná $ 370 mm $ (obr. \ref{OBRAZOK 4.12} ). Ak je uhlopriečka telesa menšia ako táto hodnota, nájdenie výsledku nie je závislé od orientácie telesa. Veľkosť uhlopriečky telesa nám teda slúži ako podmienka pre použitie predrotácie.
 
@@ -225,7 +220,8 @@ Na zistenie potrebnej orientácie objektu sme si vytvorili tvz. bezkolíznu kru�
 	\includegraphics[width=90mm]{img/PREROT-kruznica1.pdf}
 	\caption{ Bezkolízna kružnica - kolízny stav} \label{OBRAZOK 4.14} 
 \end{figure} 
-Proces hľadania tejto orientácie teda prebieha v nasledujúcich krokoch. Získame množinu všetkých dosiahnuteľných polôh v počiatočnej pozícii. Postupne inkrementujeme natočenie objektu v danej polohe a kontrolujeme, či sa nenachádza v kolízii. Podobne postupujeme aj v cieľovej pozícii. Následne tieto dve množiny porovnáme a získame ich prienik. To nám poskytne výslednú množinu orientácií objektu, v ktorých sa nebude nachádzať v kolízii v počiatku ani v cieli. Následne overíme v danej množine existuje konfigurácia, v ktorej by sa objekt nachádzal vo vnútri bezkolíznej kružnice. V prípade, že existuje takáto konfigurácia algoritmus si zapamätá aká musí byť orientácia v počiatočnom bode a po uchytení objektu je natočení do požadovanej orientácie. Následne je zavolaný RRT algoritmus, ktorého výstupom je výsledná trajektórie s už natočeným objektom.
+
+Proces hľadania tejto orientácie teda prebieha v nasledujúcich krokoch \ref{OBRAZOK 4.15} . Získame množinu všetkých dosiahnuteľných polôh v počiatočnej pozícii. Postupne inkrementujeme natočenie objektu v danej polohe a kontrolujeme, či sa nenachádza v kolízii. Podobne postupujeme aj v cieľovej pozícii. Následne tieto dve množiny porovnáme a získame ich prienik. To nám poskytne výslednú množinu orientácií objektu, v ktorých sa nebude nachádzať v kolízii v počiatku ani v cieli. Následne overíme v danej množine existuje konfigurácia, v ktorej by sa objekt nachádzal vo vnútri bezkolíznej kružnice. V prípade, že existuje takáto konfigurácia algoritmus si zapamätá aká musí byť orientácia v počiatočnom bode a po uchytení objektu je natočení do požadovanej orientácie. Následne je zavolaný RRT algoritmus, ktorého výstupom je výsledná trajektórie s už natočeným objektom.
 
 \begin{figure}[h]
 	\centering
